@@ -1,0 +1,430 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>News — BBF Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body>
+<div class="adm-shell">
+  <div class="adm-sidebar-overlay" id="adm-sidebar-overlay"></div>
+  <aside class="adm-sidebar" id="adm-sidebar" role="navigation">
+    <a href="index.html" class="adm-sidebar-logo"><div class="adm-logo-badge"><img src="../assets/images/BBF Image.jpeg" alt="BBF Logo" /></div><div class="adm-logo-text"><span class="adm-logo-name">BBF Admin</span><span class="adm-logo-role">Super Admin Panel</span></div></a>
+    <div class="adm-sidebar-admin"><div class="adm-admin-avatar"><i class="fas fa-shield-halved"></i></div><div><div class="adm-admin-name" id="adm-admin-name">Super Admin</div><div class="adm-admin-role">Super Admin</div></div></div>
+    <nav class="adm-nav">
+      <div class="adm-nav-label">Overview</div>
+      <a href="index.html" class="adm-nav-item"><i class="fas fa-gauge"></i> Dashboard</a>
+      <a href="members.html" class="adm-nav-item"><i class="fas fa-users"></i> Members</a>
+      <div class="adm-nav-label">Content</div>
+      <a href="events.html" class="adm-nav-item"><i class="fas fa-calendar-alt"></i> Events</a>
+      <a href="news.html" class="adm-nav-item active"><i class="fas fa-newspaper"></i> News</a>
+      <a href="gallery.html" class="adm-nav-item"><i class="fas fa-images"></i> Gallery</a>
+    </nav>
+    <div class="adm-sidebar-footer">
+      <a href="../index.html" class="adm-back-btn" target="_blank" rel="noopener"><i class="fas fa-globe"></i> View BBF Site</a>
+      <button class="adm-logout-btn" id="logout-btn"><i class="fas fa-right-from-bracket"></i> Sign Out</button>
+    </div>
+  </aside>
+
+  <div class="adm-main">
+    <header class="adm-topbar">
+      <button class="adm-topbar-toggle" id="adm-sidebar-toggle"><i class="fas fa-bars"></i></button>
+      <h1 class="adm-topbar-title">News & Announcements</h1>
+      <div class="adm-topbar-actions">
+        <a href="../news.html" target="_blank" class="adm-topbar-btn" title="View on site"><i class="fas fa-globe"></i></a>
+      </div>
+    </header>
+
+    <div class="adm-content">
+      <div class="adm-page-head">
+        <div><h2>News Management</h2><p>Write, publish, and manage BBF news articles and announcements.</p></div>
+        <button class="adm-btn adm-btn-primary" id="create-news-btn"><i class="fas fa-pen-nib"></i> Write Article</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="adm-stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem;" id="news-stats"></div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+        <button class="adm-btn adm-btn-primary" data-tab="all">All</button>
+        <button class="adm-btn adm-btn-ghost" data-tab="published">Published</button>
+        <button class="adm-btn adm-btn-ghost" data-tab="draft">Drafts</button>
+      </div>
+
+      <!-- Search -->
+      <div class="adm-filter-bar">
+        <div class="adm-search-wrap">
+          <i class="fas fa-search adm-search-icon"></i>
+          <input class="adm-search-input" id="news-search" type="search" placeholder="Search articles…" />
+        </div>
+        <select class="adm-filter-select" id="news-cat-filter"><option value="">All Categories</option></select>
+      </div>
+
+      <!-- Table -->
+      <div class="adm-card">
+        <div class="adm-card-header">
+          <h3 class="adm-card-title">Articles</h3>
+          <span id="news-count" style="font-size:var(--fs-xs);color:var(--adm-text-faint);font-family:var(--font-accent);"></span>
+        </div>
+        <div class="adm-card-body no-pad">
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Date</th><th>Views</th><th>Status</th><th>Featured</th><th>Actions</th></tr></thead>
+              <tbody id="news-tbody"></tbody>
+            </table>
+          </div>
+          <div id="news-empty" style="display:none;padding:2.5rem;text-align:center;color:var(--adm-text-faint);font-size:var(--fs-sm);"><i class="fas fa-newspaper" style="font-size:2rem;display:block;margin-bottom:.75rem;"></i>No articles found.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Write / Edit Modal -->
+<div class="adm-modal-overlay" id="news-modal" role="dialog" aria-modal="true">
+  <div class="adm-modal" style="max-width:640px;">
+    <div class="adm-modal-header">
+      <h3 class="adm-modal-title" id="news-modal-title">Write Article</h3>
+      <button class="adm-modal-close" onclick="admCloseModal('news-modal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="adm-modal-body">
+      <form id="news-form" novalidate>
+        <div class="adm-field"><label class="adm-label">Title <span style="color:var(--adm-red);">*</span></label><input class="adm-input" id="nw-title" required placeholder="Article headline…" /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;">
+          <div class="adm-field"><label class="adm-label">Category</label>
+            <select class="adm-select" id="nw-category"><option>Announcement</option><option>News</option><option>Update</option></select>
+          </div>
+          <div class="adm-field"><label class="adm-label">Status</label>
+            <select class="adm-select" id="nw-status"><option value="published">Published</option><option value="draft">Draft</option></select>
+          </div>
+          <div class="adm-field"><label class="adm-label">Author</label><input class="adm-input" id="nw-author" placeholder="Author name" /></div>
+          <div class="adm-field"><label class="adm-label">Date</label><input class="adm-input" type="date" id="nw-date" /></div>
+        </div>
+        <div class="adm-field"><label class="adm-label">Summary</label><textarea class="adm-textarea" id="nw-summary" style="min-height:80px;" placeholder="Short summary (shown in listings)…"></textarea></div>
+        <div class="adm-field"><label class="adm-label">Full Content</label><textarea class="adm-textarea" id="nw-content" style="min-height:120px;" placeholder="Full article content…"></textarea></div>
+        <div class="adm-field" style="display:flex;align-items:center;gap:.65rem;">
+          <input type="checkbox" id="nw-featured" style="width:16px;height:16px;accent-color:var(--adm-gold);" />
+          <label for="nw-featured" style="font-size:var(--fs-sm);color:var(--adm-text-muted);cursor:pointer;">Mark as featured article</label>
+        </div>
+        <input type="hidden" id="nw-id" />
+      </form>
+    </div>
+    <div class="adm-modal-footer">
+      <button class="adm-btn adm-btn-ghost" onclick="admCloseModal('news-modal')">Cancel</button>
+      <button class="adm-btn adm-btn-ghost" id="save-draft-btn"><i class="fas fa-floppy-disk"></i> Save Draft</button>
+      <button class="adm-btn adm-btn-primary" id="publish-btn"><i class="fas fa-paper-plane"></i> Publish</button>
+    </div>
+  </div>
+</div>
+
+<div class="adm-toast-container" id="adm-toast-container"></div>
+<div class="adm-confirm" id="adm-confirm" role="alertdialog">
+  <div class="adm-confirm-box">
+    <div class="adm-confirm-icon" id="adm-confirm-icon">⚠️</div>
+    <div class="adm-confirm-title" id="adm-confirm-title">Confirm</div>
+    <div class="adm-confirm-msg" id="adm-confirm-msg"></div>
+    <div class="adm-confirm-btns"><button class="adm-btn adm-btn-ghost" id="adm-confirm-cancel">Cancel</button><button class="adm-btn adm-btn-danger" id="adm-confirm-ok">Confirm</button></div>
+  </div>
+</div>
+
+<script src="assets/js/admin-data.js"></script>
+<script>
+  // Handle redirect from auth.php
+  (function() {
+    const p = new URLSearchParams(window.location.search).get('login');
+    if (p) { try { sessionStorage.setItem('bbf_admin_logged_in','true'); sessionStorage.setItem('bbf_admin',JSON.stringify(JSON.parse(decodeURIComponent(p)))); window.history.replaceState({},'',window.location.pathname); } catch(e){} }
+  })();
+  admAuthGuard(); admInitSidebar();
+  document.getElementById('adm-admin-name').textContent = JSON.parse(sessionStorage.getItem('bbf_admin')||'{}').name||'Super Admin';
+  document.getElementById('logout-btn').addEventListener('click', admLogout);
+
+  const API = '../api/admin/news.php';
+  let articles = [], activeTab = 'all', searchVal = '', catVal = '';
+
+  // ── Load from API ──────────────────────────────────────────────────────────────
+  async function loadArticles() {
+    document.getElementById('news-tbody').innerHTML =
+      '<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:var(--adm-text-faint);"><i class="fas fa-spinner fa-spin"></i> Loading…</td></tr>';
+    try {
+      const params = new URLSearchParams();
+      if (activeTab !== 'all') params.set('status', activeTab);
+      if (catVal)    params.set('category', catVal);
+      if (searchVal) params.set('q', searchVal);
+      const res  = await admFetch(`${API}?${params}`, { credentials:'include' });
+      const data = await res.json();
+      if (!data.success) { if (res.status===401) { admLogout(); return; } admToast(data.message,'error'); return; }
+      articles = data.data || [];
+      renderStats(); renderTable(); populateCatFilter();
+    } catch(e) { admToast('Could not load articles.','error'); }
+  }
+
+  function populateCatFilter() {
+    const cf = document.getElementById('news-cat-filter');
+    const cur = cf.value;
+    while (cf.options.length > 1) cf.remove(1);
+    [...new Set(articles.map(a=>a.category).filter(Boolean))].sort()
+      .forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; cf.appendChild(o); });
+    cf.value = cur;
+  }
+
+  function renderStats() {
+    const total = articles.length;
+    const pub   = articles.filter(a=>a.status==='published').length;
+    const views = articles.reduce((s,a)=>s+(a.views||0),0);
+    document.getElementById('news-stats').innerHTML = [
+      {cls:'gold',icon:'fa-newspaper',    val:total, lbl:'Total Articles'},
+      {cls:'green',icon:'fa-check-circle',val:pub,   lbl:'Published'},
+      {cls:'blue', icon:'fa-eye',         val:views, lbl:'Total Views'},
+    ].map(s=>`<div class="adm-stat-card"><div class="adm-stat-icon ${s.cls}"><i class="fas ${s.icon}"></i></div><div><div class="adm-stat-val">${s.val}</div><div class="adm-stat-lbl">${s.lbl}</div></div></div>`).join('');
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('news-tbody');
+    const empty = document.getElementById('news-empty');
+    document.getElementById('news-count').textContent = `${articles.length} article${articles.length!==1?'s':''}`;
+    if (!articles.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+    empty.style.display='none';
+    tbody.innerHTML = articles.map(a=>`
+      <tr>
+        <td><div class="td-name">${a.title}</div></td>
+        <td style="font-size:.82rem;">${a.category}</td>
+        <td style="font-size:.82rem;">${a.author}</td>
+        <td style="font-size:.82rem;">${admFmt(a.date||a.publishedAt)}</td>
+        <td style="font-size:.82rem;">${a.views||0}</td>
+        <td>${admBadge(a.status)}</td>
+        <td style="text-align:center;">${a.featured?'<i class="fas fa-star" style="color:var(--adm-gold);"></i>':'<i class="fas fa-star" style="color:var(--adm-text-faint);"></i>'}</td>
+        <td><div style="display:flex;gap:.35rem;">
+          <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="editArticle(${a.id})"><i class="fas fa-pen"></i></button>
+          ${a.status==='draft'?`<button class="adm-btn adm-btn-success adm-btn-sm" onclick="publishArticle(${a.id})" title="Publish"><i class="fas fa-paper-plane"></i></button>`:''}
+          <button class="adm-btn adm-btn-danger adm-btn-sm" onclick="deleteArticle(${a.id},'${a.title.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+      </tr>`).join('');
+  }
+
+  function openModal(a=null) {
+    document.getElementById('news-modal-title').textContent = a ? 'Edit Article' : 'Write Article';
+    document.getElementById('news-form').reset();
+    document.getElementById('nw-id').value = a ? a.id : '';
+    if (a) {
+      document.getElementById('nw-title').value    = a.title;
+      document.getElementById('nw-category').value = a.category;
+      document.getElementById('nw-status').value   = a.status;
+      document.getElementById('nw-author').value   = a.author;
+      document.getElementById('nw-date').value     = (a.date||a.publishedAt||'').substring(0,10);
+      document.getElementById('nw-summary').value  = a.summary||'';
+      document.getElementById('nw-content').value  = a.content||'';
+      document.getElementById('nw-featured').checked = !!a.featured;
+    } else {
+      document.getElementById('nw-date').value   = new Date().toISOString().split('T')[0];
+      document.getElementById('nw-author').value = JSON.parse(sessionStorage.getItem('bbf_admin')||'{}').name||'BBF Secretariat';
+    }
+    admOpenModal('news-modal');
+  }
+
+  async function saveArticle(status) {
+    const title = document.getElementById('nw-title').value.trim();
+    if (!title) { admToast('Title is required.','error'); return; }
+    const id = document.getElementById('nw-id').value;
+    const payload = {
+      title, status,
+      category: document.getElementById('nw-category').value,
+      author:   document.getElementById('nw-author').value||'BBF Secretariat',
+      date:     document.getElementById('nw-date').value||new Date().toISOString().split('T')[0],
+      summary:  document.getElementById('nw-summary').value,
+      content:  document.getElementById('nw-content').value,
+      featured: document.getElementById('nw-featured').checked,
+    };
+    try {
+      const url = id ? `${API}?id=${id}` : API;
+      const res  = await admFetch(url, {
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        admToast(id ? 'Article updated.' : (status==='published'?'Article published.':'Draft saved.'), 'success');
+        admCloseModal('news-modal');
+        loadArticles();
+      } else { admToast(data.message||'Save failed.','error'); }
+    } catch(e) { admToast('Could not connect to server.','error'); }
+  }
+
+  function editArticle(id) { openModal(articles.find(a=>a.id===id)); }
+
+  async function publishArticle(id) {
+    try {
+      const res  = await admFetch(`${API}?id=${id}`, {
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({status:'published'})
+      });
+      const data = await res.json();
+      if (data.success) { admToast('Article published.','success'); loadArticles(); }
+      else admToast(data.message||'Failed.','error');
+    } catch(e) { admToast('Could not connect to server.','error'); }
+  }
+
+  function deleteArticle(id, title) {
+    admConfirm('Delete Article', `Permanently delete "${title}"?`, async ()=>{
+      try {
+        const res  = await admFetch(`${API}?id=${id}`, { method:'DELETE', credentials:'include' });
+        const data = await res.json();
+        if (data.success) { admToast('Article deleted.','error'); loadArticles(); }
+        else admToast(data.message||'Delete failed.','error');
+      } catch(e) { admToast('Could not connect.','error'); }
+    });
+  }
+
+  document.getElementById('create-news-btn').addEventListener('click', ()=> openModal());
+  document.getElementById('publish-btn').addEventListener('click',    ()=> saveArticle('published'));
+  document.getElementById('save-draft-btn').addEventListener('click', ()=> saveArticle('draft'));
+
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('[data-tab]').forEach(b=>b.className='adm-btn adm-btn-ghost');
+      btn.className='adm-btn adm-btn-primary';
+      loadArticles();
+    });
+  });
+  document.getElementById('news-search').addEventListener('input', admDebounce(e=>{ searchVal=e.target.value; loadArticles(); }));
+  document.getElementById('news-cat-filter').addEventListener('change', e=>{ catVal=e.target.value; loadArticles(); });
+
+  loadArticles();
+</script>
+
+  // Populate category filter
+  const cats = [...new Set(articles.map(a=>a.category))].sort();
+  const cf = document.getElementById('news-cat-filter');
+  cats.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; cf.appendChild(o); });
+
+  function renderStats() {
+    const total = articles.length;
+    const pub   = articles.filter(a=>a.status==='published').length;
+    const views = articles.reduce((s,a)=>s+(a.views||0),0);
+    document.getElementById('news-stats').innerHTML = [
+      {cls:'gold', icon:'fa-newspaper',  val:total, lbl:'Total Articles'},
+      {cls:'green',icon:'fa-check-circle',val:pub,  lbl:'Published'},
+      {cls:'blue', icon:'fa-eye',         val:views, lbl:'Total Views'},
+    ].map(s=>`<div class="adm-stat-card"><div class="adm-stat-icon ${s.cls}"><i class="fas ${s.icon}"></i></div><div><div class="adm-stat-val">${s.val}</div><div class="adm-stat-lbl">${s.lbl}</div></div></div>`).join('');
+  }
+
+  function filtered() {
+    return articles.filter(a=>{
+      if (activeTab !== 'all' && a.status !== activeTab) return false;
+      if (catVal && a.category !== catVal) return false;
+      if (searchVal && !a.title.toLowerCase().includes(searchVal.toLowerCase())) return false;
+      return true;
+    });
+  }
+
+  function renderTable() {
+    const data = filtered();
+    const tbody = document.getElementById('news-tbody');
+    const empty = document.getElementById('news-empty');
+    document.getElementById('news-count').textContent = `${data.length} of ${articles.length}`;
+    if (!data.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+    empty.style.display='none';
+    tbody.innerHTML = data.map(a=>`
+      <tr>
+        <td><div class="td-name">${a.title}</div></td>
+        <td style="font-size:.82rem;">${a.category}</td>
+        <td style="font-size:.82rem;">${a.author}</td>
+        <td style="font-size:.82rem;">${admFmt(a.date)}</td>
+        <td style="font-size:.82rem;">${a.views}</td>
+        <td>${admBadge(a.status)}</td>
+        <td style="text-align:center;">${a.featured?'<i class="fas fa-star" style="color:var(--adm-gold);"></i>':'<i class="fas fa-star" style="color:var(--adm-text-faint);"></i>'}</td>
+        <td><div style="display:flex;gap:.35rem;">
+          <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="editArticle(${a.id})" title="Edit"><i class="fas fa-pen"></i></button>
+          ${a.status==='draft'?`<button class="adm-btn adm-btn-success adm-btn-sm" onclick="publishArticle(${a.id})" title="Publish"><i class="fas fa-paper-plane"></i></button>`:''}
+          <button class="adm-btn adm-btn-danger adm-btn-sm" onclick="deleteArticle(${a.id})" title="Delete"><i class="fas fa-trash"></i></button>
+        </div></td>
+      </tr>`).join('');
+  }
+
+  function openModal(a=null) {
+    document.getElementById('news-modal-title').textContent = a ? 'Edit Article' : 'Write Article';
+    document.getElementById('news-form').reset();
+    document.getElementById('nw-id').value = a ? a.id : '';
+    if (a) {
+      document.getElementById('nw-title').value    = a.title;
+      document.getElementById('nw-category').value = a.category;
+      document.getElementById('nw-status').value   = a.status;
+      document.getElementById('nw-author').value   = a.author;
+      document.getElementById('nw-date').value     = a.date;
+      document.getElementById('nw-summary').value  = a.summary || '';
+      document.getElementById('nw-featured').checked = a.featured;
+    } else {
+      document.getElementById('nw-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('nw-author').value = JSON.parse(sessionStorage.getItem('bbf_admin')||'{}').name || 'BBF Secretariat';
+    }
+    admOpenModal('news-modal');
+  }
+
+  function saveArticle(status) {
+    const title = document.getElementById('nw-title').value.trim();
+    if (!title) { admToast('Title is required.', 'error'); return; }
+    const id = document.getElementById('nw-id').value;
+    // TODO [BACKEND]: POST /admin/api/news or PATCH /admin/api/news/{id}
+    const data = {
+      title, status,
+      category: document.getElementById('nw-category').value,
+      author:   document.getElementById('nw-author').value || 'BBF Secretariat',
+      date:     document.getElementById('nw-date').value || new Date().toISOString().split('T')[0],
+      summary:  document.getElementById('nw-summary').value,
+      content:  document.getElementById('nw-content').value,
+      featured: document.getElementById('nw-featured').checked,
+    };
+    if (id) {
+      const idx = articles.findIndex(a=>a.id==id);
+      if (idx>-1) articles[idx] = { ...articles[idx], ...data };
+      admToast('Article updated.', 'success');
+    } else {
+      articles.push({ id:nextId++, views:0, ...data });
+      admToast(status==='published'?'Article published.':'Draft saved.', 'success');
+    }
+    admCloseModal('news-modal');
+    renderStats(); renderTable();
+  }
+
+  function editArticle(id) { openModal(articles.find(a=>a.id===id)); }
+
+  function publishArticle(id) {
+    // TODO [BACKEND]: PATCH /admin/api/news/{id} { status: 'published' }
+    const a = articles.find(x=>x.id===id);
+    if (a) { a.status='published'; renderStats(); renderTable(); admToast('Article published.', 'success'); }
+  }
+
+  function deleteArticle(id) {
+    admConfirm('Delete Article','Permanently delete this article?', ()=>{
+      // TODO [BACKEND]: DELETE /admin/api/news/{id}
+      articles = articles.filter(a=>a.id!==id);
+      renderStats(); renderTable(); admToast('Article deleted.', 'error');
+    });
+  }
+
+  document.getElementById('create-news-btn').addEventListener('click', ()=> openModal());
+  document.getElementById('publish-btn').addEventListener('click',    ()=> saveArticle('published'));
+  document.getElementById('save-draft-btn').addEventListener('click', ()=> saveArticle('draft'));
+
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('[data-tab]').forEach(b=>b.className='adm-btn adm-btn-ghost');
+      btn.className='adm-btn adm-btn-primary';
+      renderTable();
+    });
+  });
+
+  document.getElementById('news-search').addEventListener('input', admDebounce(e=>{ searchVal=e.target.value; renderTable(); }));
+  document.getElementById('news-cat-filter').addEventListener('change', e=>{ catVal=e.target.value; renderTable(); });
+
+  renderStats(); renderTable();
+</script>
+</body>
+</html>

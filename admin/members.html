@@ -1,0 +1,456 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Members — BBF Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body>
+<div class="adm-shell">
+  <div class="adm-sidebar-overlay" id="adm-sidebar-overlay"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="adm-sidebar" id="adm-sidebar" role="navigation" aria-label="Admin navigation">
+    <a href="index.html" class="adm-sidebar-logo">
+      <div class="adm-logo-badge"><img src="../assets/images/BBF Image.jpeg" alt="BBF Logo" /></div>
+      <div class="adm-logo-text"><span class="adm-logo-name">BBF Admin</span><span class="adm-logo-role">Super Admin Panel</span></div>
+    </a>
+    <div class="adm-sidebar-admin">
+      <div class="adm-admin-avatar"><i class="fas fa-shield-halved"></i></div>
+      <div><div class="adm-admin-name" id="adm-admin-name">Super Admin</div><div class="adm-admin-role">Super Admin</div></div>
+    </div>
+    <nav class="adm-nav">
+      <div class="adm-nav-label">Overview</div>
+      <a href="index.html" class="adm-nav-item"><i class="fas fa-gauge"></i> Dashboard</a>
+      <a href="members.html" class="adm-nav-item active"><i class="fas fa-users"></i> Members</a>
+      <div class="adm-nav-label">Content</div>
+      <a href="events.html" class="adm-nav-item"><i class="fas fa-calendar-alt"></i> Events</a>
+      <a href="news.html" class="adm-nav-item"><i class="fas fa-newspaper"></i> News</a>
+      <a href="gallery.html" class="adm-nav-item"><i class="fas fa-images"></i> Gallery</a>
+    </nav>
+    <div class="adm-sidebar-footer">
+      <a href="../index.html" class="adm-back-btn" target="_blank" rel="noopener"><i class="fas fa-globe"></i> View BBF Site</a>
+      <button class="adm-logout-btn" id="logout-btn"><i class="fas fa-right-from-bracket"></i> Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="adm-main">
+    <header class="adm-topbar">
+      <button class="adm-topbar-toggle" id="adm-sidebar-toggle"><i class="fas fa-bars"></i></button>
+      <h1 class="adm-topbar-title">Members</h1>
+      <div class="adm-topbar-actions">
+        <a href="../index.html" target="_blank" class="adm-topbar-btn" title="BBF Site"><i class="fas fa-globe"></i></a>
+      </div>
+    </header>
+
+    <div class="adm-content">
+      <div class="adm-page-head">
+        <div>
+          <h2>Member Management</h2>
+          <p>View, approve, suspend, and manage all BBF members.</p>
+        </div>
+        <div style="display:flex;gap:.65rem;flex-wrap:wrap;">
+          <button class="adm-btn adm-btn-ghost" id="export-btn"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="adm-stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.5rem;" id="member-stats"></div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+        <button class="adm-btn adm-btn-primary" id="tab-all" data-tab="all">All Members</button>
+        <button class="adm-btn adm-btn-ghost" id="tab-pending" data-tab="Pending">Pending <span id="tab-pending-count" style="margin-left:.35rem;"></span></button>
+        <button class="adm-btn adm-btn-ghost" id="tab-active" data-tab="Active">Active</button>
+        <button class="adm-btn adm-btn-ghost" id="tab-suspended" data-tab="Suspended">Suspended</button>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="adm-filter-bar">
+        <div class="adm-search-wrap">
+          <i class="fas fa-search adm-search-icon"></i>
+          <input class="adm-search-input" type="search" id="member-search" placeholder="Search by name, email, or ID…" />
+        </div>
+        <select class="adm-filter-select" id="state-filter">
+          <option value="">All States</option>
+        </select>
+        <select class="adm-filter-select" id="bsc-filter">
+          <option value="">BSC: All</option>
+          <option value="true">BSC: Obtained</option>
+          <option value="false">BSC: Pending</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="adm-card">
+        <div class="adm-card-header">
+          <h3 class="adm-card-title">Members</h3>
+          <span id="member-count-label" style="font-size:var(--fs-xs);color:var(--adm-text-faint);font-family:var(--font-accent);"></span>
+        </div>
+        <div class="adm-card-body no-pad">
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead>
+                <tr>
+                  <th>Member</th><th>Company</th><th>State</th>
+                  <th>BSC</th><th>Status</th><th>Joined</th><th>Last Login</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="members-tbody"></tbody>
+            </table>
+          </div>
+          <div id="members-empty" style="display:none;padding:2.5rem;text-align:center;color:var(--adm-text-faint);font-size:var(--fs-sm);">
+            <i class="fas fa-users" style="font-size:2rem;margin-bottom:.75rem;display:block;"></i> No members found.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Member detail modal -->
+<div class="adm-modal-overlay" id="member-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h3 class="adm-modal-title" id="modal-title">Member Details</h3>
+      <button class="adm-modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="adm-modal-body" id="modal-body"></div>
+    <div class="adm-modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- Toast & Confirm -->
+<div class="adm-toast-container" id="adm-toast-container"></div>
+<div class="adm-confirm" id="adm-confirm" role="alertdialog">
+  <div class="adm-confirm-box">
+    <div class="adm-confirm-icon" id="adm-confirm-icon">⚠️</div>
+    <div class="adm-confirm-title" id="adm-confirm-title">Confirm</div>
+    <div class="adm-confirm-msg" id="adm-confirm-msg"></div>
+    <div class="adm-confirm-btns">
+      <button class="adm-btn adm-btn-ghost" id="adm-confirm-cancel">Cancel</button>
+      <button class="adm-btn adm-btn-danger" id="adm-confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/admin-data.js"></script>
+<script>
+  // Handle redirect from auth.php
+  (function() {
+    const p = new URLSearchParams(window.location.search).get('login');
+    if (p) { try { sessionStorage.setItem('bbf_admin_logged_in','true'); sessionStorage.setItem('bbf_admin',JSON.stringify(JSON.parse(decodeURIComponent(p)))); window.history.replaceState({},'',window.location.pathname); } catch(e){} }
+  })();
+  admAuthGuard();
+  admInitSidebar();
+  document.getElementById('adm-admin-name').textContent = JSON.parse(sessionStorage.getItem('bbf_admin')||'{}').name || 'Super Admin';
+  document.getElementById('logout-btn').addEventListener('click', admLogout);
+
+  // ── State ────────────────────────────────────────────────────────────────────
+  let members   = [];   // loaded from API
+  let activeTab = 'all';
+  let searchVal = '';
+  let stateVal  = '';
+  let bscVal    = '';
+
+  // ── Loading state ─────────────────────────────────────────────────────────────
+  function showLoading() {
+    document.getElementById('members-tbody').innerHTML = `
+      <tr><td colspan="8" style="text-align:center;padding:2.5rem;color:var(--adm-text-faint);">
+        <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;display:block;margin-bottom:.75rem;"></i>
+        Loading members…
+      </td></tr>`;
+    document.getElementById('members-empty').style.display = 'none';
+  }
+
+  function showError(msg) {
+    document.getElementById('members-tbody').innerHTML = `
+      <tr><td colspan="8" style="text-align:center;padding:2.5rem;color:var(--adm-red);">
+        <i class="fas fa-circle-exclamation" style="font-size:1.5rem;display:block;margin-bottom:.75rem;"></i>
+        ${msg}
+      </td></tr>`;
+  }
+
+  // ── Fetch members from real API ───────────────────────────────────────────────
+  async function loadMembers() {
+    showLoading();
+    try {
+      const params = new URLSearchParams();
+      if (activeTab !== 'all') params.set('status', activeTab);
+      if (stateVal)  params.set('state', stateVal);
+      if (searchVal) params.set('q', searchVal);
+      if (bscVal)    params.set('bsc', bscVal === 'true' ? 'yes' : 'no');
+
+      const res  = await admFetch(`../api/admin/members.php?${params.toString()}`, {
+        credentials: 'include'
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        if (res.status === 401) { admLogout(); return; }
+        showError(data.message || 'Failed to load members.');
+        return;
+      }
+
+      members = data.data || [];
+      renderStats();
+      renderTable();
+      populateStateFilter();
+
+    } catch(e) {
+      showError('Could not connect to server. Make sure XAMPP is running.');
+    }
+  }
+
+  // ── Populate state dropdown from loaded members ────────────────────────────────
+  function populateStateFilter() {
+    const sf = document.getElementById('state-filter');
+    const currentVal = sf.value;
+    // Keep first "All States" option, rebuild the rest
+    while (sf.options.length > 1) sf.remove(1);
+    const states = [...new Set(members.map(m => m.state).filter(Boolean))].sort();
+    states.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      sf.appendChild(o);
+    });
+    sf.value = currentVal;
+  }
+
+  // ── Stats strip ───────────────────────────────────────────────────────────────
+  function renderStats() {
+    // Always fetch full count from API for accurate stats (not filtered set)
+    admFetch('../api/admin/members.php', { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        const all       = data.data || [];
+        const total     = all.length;
+        const active    = all.filter(m => m.status === 'Active').length;
+        const pending   = all.filter(m => m.status === 'Pending').length;
+        const suspended = all.filter(m => m.status === 'Suspended').length;
+
+        document.getElementById('member-stats').innerHTML = [
+          { cls:'gold',  icon:'fa-users',     val:total,     lbl:'Total Members' },
+          { cls:'green', icon:'fa-user-check', val:active,   lbl:'Active'        },
+          { cls:'amber', icon:'fa-user-clock', val:pending,  lbl:'Pending'       },
+          { cls:'red',   icon:'fa-user-slash', val:suspended,lbl:'Suspended'     },
+        ].map(s => `
+          <div class="adm-stat-card">
+            <div class="adm-stat-icon ${s.cls}"><i class="fas ${s.icon}"></i></div>
+            <div><div class="adm-stat-val">${s.val}</div><div class="adm-stat-lbl">${s.lbl}</div></div>
+          </div>`).join('');
+
+        const tc = document.getElementById('tab-pending-count');
+        if (tc) tc.textContent = pending > 0 ? `(${pending})` : '';
+      })
+      .catch(() => {}); // silent fail — stats are cosmetic
+  }
+
+  // ── Render table from loaded members ──────────────────────────────────────────
+  function renderTable() {
+    const tbody = document.getElementById('members-tbody');
+    const empty = document.getElementById('members-empty');
+    const lbl   = document.getElementById('member-count-label');
+
+    if (lbl) lbl.textContent = members.length
+      ? `Showing ${members.length} member${members.length !== 1 ? 's' : ''}`
+      : '';
+
+    if (!members.length) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = members.map(m => `
+      <tr>
+        <td>
+          <div class="td-name">${m.name}</div>
+          <div class="td-id">${m.id}</div>
+          <div style="font-size:.68rem;color:var(--adm-text-faint);">${m.email}</div>
+        </td>
+        <td style="font-size:.82rem;">${m.company || '—'}</td>
+        <td style="font-size:.82rem;">${m.state || '—'}</td>
+        <td>${m.bsc ? '<span class="adm-badge active">Yes</span>' : '<span class="adm-badge pending">Pending</span>'}</td>
+        <td>${admBadge(m.status)}</td>
+        <td style="font-size:.78rem;">${admFmt(m.joined)}</td>
+        <td style="font-size:.78rem;">${m.lastLogin ? admFmt(m.lastLogin) : '<span style="color:var(--adm-text-faint);">Never</span>'}</td>
+        <td>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+            <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="viewMember('${m.dbId}')">
+              <i class="fas fa-eye"></i>
+            </button>
+            ${m.status === 'Pending'
+              ? `<button class="adm-btn adm-btn-success adm-btn-sm" onclick="approveMember('${m.dbId}','${m.name}')">
+                   <i class="fas fa-check"></i> Approve
+                 </button>` : ''}
+            ${m.status === 'Active'
+              ? `<button class="adm-btn adm-btn-danger adm-btn-sm" onclick="suspendMember('${m.dbId}','${m.name}')">
+                   <i class="fas fa-ban"></i>
+                 </button>` : ''}
+            ${m.status === 'Suspended'
+              ? `<button class="adm-btn adm-btn-success adm-btn-sm" onclick="reactivateMember('${m.dbId}','${m.name}')">
+                   <i class="fas fa-rotate-left"></i>
+                 </button>` : ''}
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  // ── View member detail modal ──────────────────────────────────────────────────
+  async function viewMember(dbId) {
+    document.getElementById('modal-title').textContent = 'Loading…';
+    document.getElementById('modal-body').innerHTML = '<div style="text-align:center;padding:2rem;color:var(--adm-text-faint);"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+    admOpenModal('member-modal');
+
+    try {
+      const res  = await admFetch(`../api/admin/members.php?id=${dbId}`, { credentials: 'include' });
+      const data = await res.json();
+      if (!data.success) { admCloseModal('member-modal'); admToast(data.message, 'error'); return; }
+      const m = data.data;
+
+      document.getElementById('modal-title').textContent = m.name;
+      document.getElementById('modal-body').innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.5rem;font-size:var(--fs-sm);">
+          ${[
+            ['Member ID',   m.id],
+            ['Status',      admBadge(m.status)],
+            ['Email',       m.email],
+            ['Phone',       m.phone || '—'],
+            ['State',       m.state || '—'],
+            ['LGA',         m.lga  || '—'],
+            ['BB Company',  m.company || '—'],
+            ['BB Council',  m.council || '—'],
+            ['BB Status',   m.bbStatus === 'active' ? 'Active Member' : 'Former Member'],
+            ['BSC',         m.bsc === 'yes' ? '✓ Obtained' : m.bsc === 'in-progress' ? 'In Progress' : 'Not yet'],
+            ['Joined',      admFmt(m.joined)],
+            ['Last Login',  m.lastLogin ? admFmt(m.lastLogin) : 'Never'],
+          ].map(([l,v]) => `
+            <div>
+              <div style="font-size:.65rem;font-family:var(--font-accent);letter-spacing:.06em;text-transform:uppercase;color:var(--adm-text-faint);margin-bottom:.2rem;">${l}</div>
+              <div style="color:var(--adm-text);font-weight:500;">${v}</div>
+            </div>`).join('')}
+        </div>`;
+
+      document.getElementById('modal-footer').innerHTML = `
+        ${m.status === 'Pending'
+          ? `<button class="adm-btn adm-btn-success" onclick="approveMember('${m.dbId}','${m.name}');admCloseModal('member-modal')">
+               <i class="fas fa-check"></i> Approve
+             </button>` : ''}
+        ${m.status === 'Active'
+          ? `<button class="adm-btn adm-btn-danger" onclick="suspendMember('${m.dbId}','${m.name}');admCloseModal('member-modal')">
+               <i class="fas fa-ban"></i> Suspend
+             </button>` : ''}
+        ${m.status === 'Suspended'
+          ? `<button class="adm-btn adm-btn-success" onclick="reactivateMember('${m.dbId}','${m.name}');admCloseModal('member-modal')">
+               <i class="fas fa-rotate-left"></i> Reactivate
+             </button>` : ''}
+        <button class="adm-btn adm-btn-ghost" onclick="admCloseModal('member-modal')">Close</button>`;
+
+    } catch(e) {
+      admCloseModal('member-modal');
+      admToast('Could not load member details.', 'error');
+    }
+  }
+
+  // ── Status actions ────────────────────────────────────────────────────────────
+  async function patchMember(dbId, action, name, confirmMsg, confirmTitle, danger) {
+    admConfirm(confirmTitle, confirmMsg, async () => {
+      try {
+        const res  = await admFetch(`../api/admin/members.php?id=${dbId}`, {
+          method: 'POST', // POST used as PATCH alias
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action })
+        });
+        const data = await res.json();
+        if (data.success) {
+          admToast(data.message || `${name} updated.`, action === 'suspend' ? 'error' : 'success');
+          loadMembers(); // reload from server
+        } else {
+          admToast(data.message || 'Action failed.', 'error');
+        }
+      } catch(e) {
+        admToast('Could not connect to server.', 'error');
+      }
+    }, danger);
+  }
+
+  function approveMember(dbId, name) {
+    patchMember(dbId, 'approve', name,
+      `Approve ${name} and grant them Active membership? A welcome email with login credentials will be sent.`,
+      'Approve Member', false);
+  }
+  function suspendMember(dbId, name) {
+    patchMember(dbId, 'suspend', name,
+      `Suspend ${name}? They will lose access to the member portal and receive a notification email.`,
+      'Suspend Member', true);
+  }
+  function reactivateMember(dbId, name) {
+    patchMember(dbId, 'reactivate', name,
+      `Reactivate ${name}'s membership? They will regain access to the member portal.`,
+      'Reactivate Member', false);
+  }
+
+  // ── Tabs ──────────────────────────────────────────────────────────────────────
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('[data-tab]').forEach(b => b.className = 'adm-btn adm-btn-ghost');
+      btn.className = 'adm-btn adm-btn-primary';
+      loadMembers();
+    });
+  });
+
+  // ── Search & filters (debounced) ──────────────────────────────────────────────
+  document.getElementById('member-search').addEventListener('input', admDebounce(e => {
+    searchVal = e.target.value;
+    loadMembers();
+  }));
+  document.getElementById('state-filter').addEventListener('change', e => {
+    stateVal = e.target.value;
+    loadMembers();
+  });
+  document.getElementById('bsc-filter').addEventListener('change', e => {
+    bscVal = e.target.value;
+    loadMembers();
+  });
+
+  // ── Export CSV ────────────────────────────────────────────────────────────────
+  document.getElementById('export-btn').addEventListener('click', () => {
+    if (!members.length) { admToast('No members to export.', 'info'); return; }
+    const headers = ['Member ID','Name','Email','Phone','State','Company','Council','BSC','Status','Joined','Last Login'];
+    const rows = members.map(m => [
+      m.id, m.name, m.email, m.phone || '', m.state || '',
+      m.company || '', m.council || '',
+      m.bsc ? 'Yes' : 'Pending',
+      m.status, m.joined || '', m.lastLogin || ''
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+    const csv  = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href     = URL.createObjectURL(blob);
+    link.download = `BBF_Members_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    admToast('CSV downloaded.', 'success');
+  });
+
+  // ── Modal close ───────────────────────────────────────────────────────────────
+  document.getElementById('modal-close').addEventListener('click', () => admCloseModal('member-modal'));
+  document.getElementById('member-modal').addEventListener('click', e => {
+    if (e.target.id === 'member-modal') admCloseModal('member-modal');
+  });
+
+  // ── Initial load ──────────────────────────────────────────────────────────────
+  loadMembers();
+</script>
+</body>
+</html>

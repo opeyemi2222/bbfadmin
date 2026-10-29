@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Login — BBF Super Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <style>
+    body { background:var(--adm-bg);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem; }
+    .login-wrap { width:100%;max-width:420px; }
+    .login-logo { display:flex;align-items:center;gap:0.75rem;justify-content:center;margin-bottom:2rem; }
+    .login-logo-badge { width:52px;height:52px;border-radius:10px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center; }
+    .login-logo-badge img { width:100%;height:100%;object-fit:contain; }
+    .login-logo-text { display:flex;flex-direction:column; }
+    .login-logo-name { font-family:var(--font-accent);font-size:0.8rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--adm-text); }
+    .login-logo-role { font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--adm-gold);margin-top:2px; }
+    .login-card { background:var(--adm-surface);border:1px solid var(--adm-border-md);border-radius:var(--radius-xl);padding:2.25rem 2rem;box-shadow:var(--shadow-lg); }
+    .login-heading { text-align:center;margin-bottom:1.5rem; }
+    .login-heading h1 { font-family:var(--font-head);font-size:1.75rem;font-weight:800;color:var(--adm-text);margin:0 0 0.4rem; }
+    .login-heading p { font-size:var(--fs-sm);color:var(--adm-text-muted);margin:0; }
+    .login-field { margin-bottom:1.1rem; }
+    .login-label { display:block;font-size:var(--fs-xs);font-family:var(--font-accent);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--adm-text-muted);margin-bottom:0.4rem; }
+    .login-input-wrap { position:relative; }
+    .login-input-icon { position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--adm-text-faint);font-size:0.82rem;pointer-events:none; }
+    .login-input { width:100%;padding:0.75rem 0.9rem 0.75rem 2.5rem;background:var(--adm-surface-2);border:1px solid var(--adm-border);border-radius:var(--radius-sm);color:var(--adm-text);font-size:var(--fs-sm);font-family:var(--font-body);outline:none;transition:border-color var(--trans-fast); }
+    .login-input:focus { border-color:var(--adm-gold); }
+    .login-input::placeholder { color:var(--adm-text-faint); }
+    .login-input.has-toggle { padding-right:2.5rem; }
+    .pw-toggle { position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--adm-text-faint);font-size:0.82rem;cursor:pointer;padding:0.25rem; }
+    .login-alert { display:none;align-items:center;gap:0.65rem;padding:0.8rem 1rem;background:var(--adm-red-dim);border:1px solid rgba(229,62,62,0.25);border-radius:var(--radius-sm);font-size:var(--fs-sm);color:#fc8181;margin-bottom:1.25rem; }
+    .login-alert.show { display:flex; }
+    .login-submit { width:100%;padding:0.85rem;background:linear-gradient(135deg,#a07a2a,#c9a84c);border:none;border-radius:var(--radius-sm);font-family:var(--font-accent);font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0a1628;cursor:pointer;transition:opacity var(--trans-fast);display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.25rem; }
+    .login-submit:hover { opacity:0.9; }
+    .login-submit:disabled { opacity:0.5;pointer-events:none; }
+    .login-back { text-align:center;margin-top:1.5rem;font-size:var(--fs-xs);color:var(--adm-text-faint);font-family:var(--font-accent);letter-spacing:0.06em;text-transform:uppercase; }
+    .login-back a { color:var(--adm-text-muted);text-decoration:underline; }
+    .login-warning { display:flex;align-items:flex-start;gap:0.65rem;padding:0.8rem 1rem;background:var(--adm-red-dim);border:1px solid rgba(229,62,62,0.15);border-radius:var(--radius-sm);font-size:0.72rem;color:#fc8181;margin-bottom:1.5rem;line-height:1.5; }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-logo-badge">
+        <img src="../assets/images/BBF Image.jpeg" alt="BBF Logo" />
+      </div>
+      <div class="login-logo-text">
+        <span class="login-logo-name">Brigade Brotherhood Fellowship</span>
+        <span class="login-logo-role">Super Admin Portal</span>
+      </div>
+    </div>
+
+    <div class="login-card">
+      <div class="login-heading">
+        <h1>Admin Sign In</h1>
+        <p>Restricted access — authorised administrators only.</p>
+      </div>
+
+      <div class="login-warning">
+        <i class="fas fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0;"></i>
+        <span>This portal is for authorised BBF administrators only. Unauthorised access is prohibited.</span>
+      </div>
+
+      <div class="login-alert" id="login-alert" role="alert">
+        <i class="fas fa-circle-xmark"></i>
+        <span id="login-alert-msg">Incorrect email or password.</span>
+      </div>
+
+      <!-- Direct PHP POST form — works without fetch/AJAX -->
+      <form id="admin-login-form" method="POST" action="auth.php" novalidate>
+        <div class="login-field">
+          <label class="login-label" for="adm-email">Admin Email</label>
+          <div class="login-input-wrap">
+            <input class="login-input" type="email" id="adm-email" name="email" autocomplete="username" required placeholder="admin@bbfellowship.org" />
+            <i class="fas fa-envelope login-input-icon"></i>
+          </div>
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="adm-password">Password</label>
+          <div class="login-input-wrap">
+            <input class="login-input has-toggle" type="password" id="adm-password" name="password" autocomplete="current-password" required placeholder="••••••••••" />
+            <i class="fas fa-lock login-input-icon"></i>
+            <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password">
+              <i class="fas fa-eye" id="pw-icon"></i>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="login-submit" id="login-btn">
+          <i class="fas fa-shield-halved"></i> Sign In to Admin Panel
+        </button>
+      </form>
+
+      <div class="login-back">
+        <a href="../index.html"><i class="fas fa-arrow-left" style="font-size:0.65rem;"></i> Back to BBF Website</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show error if redirected back with ?error=1
+    if (window.location.search.includes('error=1')) {
+      document.getElementById('login-alert').classList.add('show');
+      document.getElementById('login-alert-msg').textContent = 'Incorrect email or password. Access denied.';
+    }
+
+    // If already logged in via sessionStorage, skip to dashboard
+    if (sessionStorage.getItem('bbf_admin_logged_in')) {
+      window.location.href = 'index.html';
+    }
+
+    // Password toggle
+    document.getElementById('pw-toggle').addEventListener('click', () => {
+      const inp  = document.getElementById('adm-password');
+      const icon = document.getElementById('pw-icon');
+      const show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      icon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+    });
+
+    // Show spinner on submit
+    document.getElementById('admin-login-form').addEventListener('submit', () => {
+      const btn = document.getElementById('login-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
+    });
+  </script>
+</body>
+</html>

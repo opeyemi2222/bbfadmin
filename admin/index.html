@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboard — BBF Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body>
+<div class="adm-shell">
+  <div class="adm-sidebar-overlay" id="adm-sidebar-overlay"></div>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="adm-sidebar" id="adm-sidebar" role="navigation" aria-label="Admin navigation">
+    <a href="index.html" class="adm-sidebar-logo">
+      <div class="adm-logo-badge"><img src="../assets/images/BBF Image.jpeg" alt="BBF Logo" /></div>
+      <div class="adm-logo-text">
+        <span class="adm-logo-name">BBF Admin</span>
+        <span class="adm-logo-role">Super Admin Panel</span>
+      </div>
+    </a>
+    <div class="adm-sidebar-admin">
+      <div class="adm-admin-avatar"><i class="fas fa-shield-halved"></i></div>
+      <div>
+        <div class="adm-admin-name" id="adm-admin-name">Super Admin</div>
+        <div class="adm-admin-role" id="adm-admin-role">Super Admin</div>
+      </div>
+    </div>
+    <nav class="adm-nav">
+      <div class="adm-nav-label">Overview</div>
+      <a href="index.html" class="adm-nav-item active"><i class="fas fa-gauge"></i> Dashboard</a>
+      <a href="members.html" class="adm-nav-item"><i class="fas fa-users"></i> Members <span class="adm-nav-badge" id="pending-badge"></span></a>
+      <div class="adm-nav-label">Content</div>
+      <a href="events.html" class="adm-nav-item"><i class="fas fa-calendar-alt"></i> Events</a>
+      <a href="news.html" class="adm-nav-item"><i class="fas fa-newspaper"></i> News</a>
+      <a href="gallery.html" class="adm-nav-item"><i class="fas fa-images"></i> Gallery <span class="adm-nav-badge" id="gallery-badge"></span></a>
+      <div class="adm-nav-label">Monitoring</div>
+      <a href="index.html#logins" class="adm-nav-item" id="nav-logins"><i class="fas fa-right-to-bracket"></i> Login Logs</a>
+    </nav>
+    <div class="adm-sidebar-footer">
+      <a href="../index.html" class="adm-back-btn" target="_blank" rel="noopener"><i class="fas fa-globe"></i> View BBF Site</a>
+      <button class="adm-logout-btn" id="logout-btn"><i class="fas fa-right-from-bracket"></i> Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="adm-main">
+    <header class="adm-topbar">
+      <button class="adm-topbar-toggle" id="adm-sidebar-toggle" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+      <h1 class="adm-topbar-title" id="adm-topbar-title">Dashboard</h1>
+      <div class="adm-topbar-actions">
+        <a href="../index.html" target="_blank" rel="noopener" class="adm-topbar-btn" title="View BBF Website"><i class="fas fa-globe"></i></a>
+        <button class="adm-topbar-btn" id="refresh-btn" title="Refresh data"><i class="fas fa-rotate-right"></i></button>
+      </div>
+    </header>
+
+    <div class="adm-content">
+
+      <!-- Stat cards -->
+      <div class="adm-stats-row" id="stats-row"><!-- JS --></div>
+
+      <!-- Two-col -->
+      <div class="adm-two-col">
+
+        <!-- Left: Recent registrations + Login logs -->
+        <div>
+          <!-- Recent registrations -->
+          <div class="adm-card">
+            <div class="adm-card-header">
+              <h2 class="adm-card-title"><i class="fas fa-user-plus" style="color:var(--adm-gold);margin-right:.4rem;"></i>Recent Registrations</h2>
+              <a href="members.html" class="adm-btn adm-btn-ghost adm-btn-sm">View all</a>
+            </div>
+            <div class="adm-card-body no-pad">
+              <div class="adm-table-wrap">
+                <table class="adm-table" id="recent-regs-table">
+                  <thead><tr><th>Member</th><th>Company</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+                  <tbody id="recent-regs-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Login logs -->
+          <div class="adm-card" id="logins">
+            <div class="adm-card-header">
+              <h2 class="adm-card-title"><i class="fas fa-right-to-bracket" style="color:var(--adm-gold);margin-right:.4rem;"></i>Login Logs</h2>
+              <span style="font-size:var(--fs-xs);color:var(--adm-text-faint);font-family:var(--font-accent);letter-spacing:.05em;">Last 8 entries</span>
+            </div>
+            <div class="adm-card-body no-pad">
+              <div class="adm-table-wrap">
+                <table class="adm-table" id="login-logs-table">
+                  <thead><tr><th>Member</th><th>IP Address</th><th>Device</th><th>Time</th><th>Status</th></tr></thead>
+                  <tbody id="login-logs-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Activity feed + Quick stats -->
+        <div>
+          <!-- Activity feed -->
+          <div class="adm-card">
+            <div class="adm-card-header">
+              <h2 class="adm-card-title"><i class="fas fa-bolt" style="color:var(--adm-gold);margin-right:.4rem;"></i>Activity Feed</h2>
+            </div>
+            <div id="activity-feed"><!-- JS --></div>
+          </div>
+
+          <!-- Quick links -->
+          <div class="adm-card" style="margin-top:1.25rem;">
+            <div class="adm-card-header">
+              <h2 class="adm-card-title">Quick Actions</h2>
+            </div>
+            <div class="adm-card-body" style="display:flex;flex-direction:column;gap:.65rem;">
+              <a href="members.html" class="adm-btn adm-btn-ghost" style="justify-content:center;"><i class="fas fa-user-check"></i> Manage Members</a>
+              <a href="events.html" class="adm-btn adm-btn-ghost" style="justify-content:center;"><i class="fas fa-calendar-plus"></i> Create Event</a>
+              <a href="news.html" class="adm-btn adm-btn-ghost" style="justify-content:center;"><i class="fas fa-pen-nib"></i> Post News</a>
+              <a href="gallery.html" class="adm-btn adm-btn-ghost" style="justify-content:center;"><i class="fas fa-images"></i> Review Gallery</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div>
+
+<!-- Toast container -->
+<div class="adm-toast-container" id="adm-toast-container"></div>
+
+<!-- Confirm dialog -->
+<div class="adm-confirm" id="adm-confirm" role="alertdialog" aria-modal="true">
+  <div class="adm-confirm-box">
+    <div class="adm-confirm-icon" id="adm-confirm-icon">⚠️</div>
+    <div class="adm-confirm-title" id="adm-confirm-title">Confirm Action</div>
+    <div class="adm-confirm-msg" id="adm-confirm-msg"></div>
+    <div class="adm-confirm-btns">
+      <button class="adm-btn adm-btn-ghost" id="adm-confirm-cancel">Cancel</button>
+      <button class="adm-btn adm-btn-danger" id="adm-confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/admin-data.js"></script>
+<script>
+  // Pick up login data from PHP redirect (after form POST to auth.php)
+  // This MUST run before admAuthGuard()
+  const urlParams = new URLSearchParams(window.location.search);
+  const loginParam = urlParams.get('login');
+  if (loginParam) {
+    try {
+      const adminData = JSON.parse(decodeURIComponent(loginParam));
+      sessionStorage.setItem('bbf_admin_logged_in', 'true');
+      sessionStorage.setItem('bbf_admin', JSON.stringify(adminData));
+      // Clean URL
+      window.history.replaceState({}, '', 'index.html');
+    } catch(e) {}
+  }
+
+  admAuthGuard();
+  admInitSidebar();
+
+  const admin = JSON.parse(sessionStorage.getItem('bbf_admin') || '{}');
+  document.getElementById('adm-admin-name').textContent = admin.name || 'Super Admin';
+  document.getElementById('adm-admin-role').textContent = admin.role || 'Super Admin';
+
+  document.getElementById('logout-btn').addEventListener('click', admLogout);
+  document.getElementById('refresh-btn').addEventListener('click', () => { loadDashboard(); admToast('Data refreshed.', 'info'); });
+
+  // ── Helpers ───────────────────────────────────────────────────────────────────
+  function setTbodyLoading(id, cols) {
+    document.getElementById(id).innerHTML = `
+      <tr><td colspan="${cols}" style="text-align:center;padding:1.5rem;color:var(--adm-text-faint);">
+        <i class="fas fa-spinner fa-spin"></i> Loading…
+      </td></tr>`;
+  }
+
+  // ── Load all dashboard data ────────────────────────────────────────────────────
+  async function loadDashboard() {
+    await Promise.all([loadStats(), loadRecentRegistrations(), loadLoginLogs(), loadActivityFeed()]);
+  }
+
+  // ── Stats from real API ────────────────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const [membersRes, logsRes, galleryRes] = await Promise.all([
+        admFetch('../api/admin/members.php', { credentials: 'include' }).then(r => r.json()),
+        admFetch('../api/admin/login-logs.php', { credentials: 'include' }).then(r => r.json()),
+        admFetch('../api/admin/gallery.php', { credentials: 'include' }).then(r => r.json()),
+      ]);
+
+      const members     = membersRes.data  || [];
+      const logs        = logsRes.data?.logs || [];
+      const gallery     = galleryRes.data   || [];
+
+      const total       = members.length;
+      const pending     = members.filter(m => m.status === 'Pending').length;
+      const successLogins = logs.filter(l => l.status === 'success').length;
+      const failedLogins  = logs.filter(l => l.status === 'failed').length;
+      const galPending    = gallery.filter(g => g.status === 'pending').length;
+
+      // Update sidebar badges
+      const pb = document.getElementById('pending-badge');
+      if (pb) { pb.textContent = pending; pb.style.display = pending ? '' : 'none'; }
+      const gb = document.getElementById('gallery-badge');
+      if (gb) { gb.textContent = galPending; gb.style.display = galPending ? '' : 'none'; }
+
+      // Stat cards
+      const statsData = [
+        { icon:'fa-users',                cls:'gold',  val:total,         lbl:'Total Members',       delta: pending > 0 ? `${pending} pending approval` : 'All up to date', dir:'' },
+        { icon:'fa-user-clock',           cls:'amber', val:pending,       lbl:'Pending Approvals',   delta:'Awaiting review', dir:'' },
+        { icon:'fa-right-to-bracket',     cls:'blue',  val:successLogins, lbl:'Successful Logins',   delta:'All time', dir:'' },
+        { icon:'fa-triangle-exclamation', cls:'red',   val:failedLogins,  lbl:'Failed Login Attempts',delta:'Security flag', dir:'' },
+      ];
+      document.getElementById('stats-row').innerHTML = statsData.map(s => `
+        <div class="adm-stat-card">
+          <div class="adm-stat-icon ${s.cls}"><i class="fas ${s.icon}"></i></div>
+          <div>
+            <div class="adm-stat-val">${s.val}</div>
+            <div class="adm-stat-lbl">${s.lbl}</div>
+            ${s.delta ? `<div class="adm-stat-delta ${s.dir}">${s.delta}</div>` : ''}
+          </div>
+        </div>`).join('');
+
+    } catch(e) {
+      document.getElementById('stats-row').innerHTML = `
+        <div style="grid-column:1/-1;color:var(--adm-text-faint);font-size:var(--fs-sm);padding:.5rem;">
+          Could not load stats.
+        </div>`;
+    }
+  }
+
+  // ── Recent registrations from real API ────────────────────────────────────────
+  async function loadRecentRegistrations() {
+    setTbodyLoading('recent-regs-body', 5);
+    try {
+      const res  = await admFetch('../api/admin/members.php', { credentials: 'include' });
+      const data = await res.json();
+      if (!data.success) { document.getElementById('recent-regs-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--adm-text-faint);">Could not load members.</td></tr>'; return; }
+
+      const recent = (data.data || [])
+        .sort((a, b) => (b.joined || '').localeCompare(a.joined || ''))
+        .slice(0, 5);
+
+      if (!recent.length) {
+        document.getElementById('recent-regs-body').innerHTML = `
+          <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--adm-text-faint);">
+            No members registered yet.
+          </td></tr>`;
+        return;
+      }
+
+      document.getElementById('recent-regs-body').innerHTML = recent.map(m => `
+        <tr>
+          <td>
+            <div class="td-name">${m.name}</div>
+            <div class="td-id">${m.id}</div>
+          </td>
+          <td style="font-size:.82rem;">${m.company || '—'}</td>
+          <td>${admBadge(m.status)}</td>
+          <td style="font-size:.78rem;">${admFmt(m.joined)}</td>
+          <td>
+            <a href="members.html" class="adm-btn adm-btn-ghost adm-btn-sm">
+              <i class="fas fa-eye"></i>
+            </a>
+          </td>
+        </tr>`).join('');
+
+    } catch(e) {
+      document.getElementById('recent-regs-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--adm-red);">Error loading data.</td></tr>';
+    }
+  }
+
+  // ── Login logs from real API ───────────────────────────────────────────────────
+  async function loadLoginLogs() {
+    setTbodyLoading('login-logs-body', 5);
+    try {
+      const res  = await admFetch('../api/admin/login-logs.php?limit=8', { credentials: 'include' });
+      const data = await res.json();
+      const logs = data.data?.logs || [];
+
+      if (!logs.length) {
+        document.getElementById('login-logs-body').innerHTML = `
+          <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--adm-text-faint);">
+            No login activity yet.
+          </td></tr>`;
+        return;
+      }
+
+      document.getElementById('login-logs-body').innerHTML = logs.map(l => `
+        <tr>
+          <td>
+            <div class="td-name">${l.member_name || 'Unknown'}</div>
+            <div style="font-size:.68rem;color:var(--adm-text-faint);">${l.email}</div>
+          </td>
+          <td style="font-family:monospace;font-size:.78rem;">${l.ip_address || '—'}</td>
+          <td style="font-size:.78rem;">${l.user_agent ? l.user_agent.substring(0,40) + '…' : '—'}</td>
+          <td style="font-size:.78rem;">${admFmtTs(l.created_at)}</td>
+          <td>${admBadge(l.status === 'success' ? 'Active' : 'Suspended')}</td>
+        </tr>`).join('');
+
+    } catch(e) {
+      document.getElementById('login-logs-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--adm-red);">Error loading login logs.</td></tr>';
+    }
+  }
+
+  // ── Activity feed (built from real members + logs) ────────────────────────────
+  async function loadActivityFeed() {
+    const feedEl = document.getElementById('activity-feed');
+    feedEl.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--adm-text-faint);"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+      const [membersRes, logsRes] = await Promise.all([
+        admFetch('../api/admin/members.php', { credentials: 'include' }).then(r => r.json()),
+        admFetch('../api/admin/login-logs.php?limit=20', { credentials: 'include' }).then(r => r.json()),
+      ]);
+
+      const members = (membersRes.data || []).slice(0, 5);
+      const logs    = (logsRes.data?.logs || []).filter(l => l.status === 'success').slice(0, 5);
+      const items   = [];
+
+      members.forEach(m => {
+        items.push({
+          type: m.status === 'Active' ? 'join' : 'join',
+          msg:  `<strong>${m.name}</strong> ${m.status === 'Pending' ? 'submitted a membership registration.' : 'was approved as a member.'}`,
+          time: admFmt(m.joined),
+          sort: m.joined,
+        });
+      });
+
+      logs.forEach(l => {
+        if (l.member_name && l.member_name !== 'Unknown') {
+          items.push({
+            type: 'login',
+            msg:  `<strong>${l.member_name}</strong> logged in from ${l.ip_address || 'unknown IP'}.`,
+            time: admFmtTs(l.created_at),
+            sort: l.created_at,
+          });
+        }
+      });
+
+      // Check for failed logins
+      const failedLogs = (logsRes.data?.logs || []).filter(l => l.status === 'failed').slice(0, 3);
+      failedLogs.forEach(l => {
+        items.push({
+          type: 'warning',
+          msg:  `Failed login attempt from <strong>${l.ip_address || 'unknown IP'}</strong> (${l.email}).`,
+          time: admFmtTs(l.created_at),
+          sort: l.created_at,
+        });
+      });
+
+      // Sort newest first
+      items.sort((a, b) => (b.sort || '').localeCompare(a.sort || ''));
+
+      if (!items.length) {
+        feedEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--adm-text-faint);font-size:var(--fs-sm);">No activity yet.</div>';
+        return;
+      }
+
+      feedEl.innerHTML = items.slice(0, 10).map(a => `
+        <div class="adm-activity-item">
+          <div class="adm-activity-dot ${a.type}"></div>
+          <div class="adm-activity-msg">${a.msg}</div>
+          <div class="adm-activity-time">${a.time}</div>
+        </div>`).join('');
+
+    } catch(e) {
+      feedEl.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--adm-red);font-size:var(--fs-sm);">Error loading activity.</div>';
+    }
+  }
+
+  // ── Nav login scroll ───────────────────────────────────────────────────────────
+  document.getElementById('nav-logins')?.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('logins')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // ── Initial load ──────────────────────────────────────────────────────────────
+  loadDashboard();
+</script>
+</body>
+</html>
